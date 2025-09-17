@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+meta
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    meta
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: {{ .Values.mongoImage.repository }}:{{ .Values.mongoImage.tag }}
+          ports:
+            - containerPort: {{ .Values.mongo.port }}
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+      volumes:
+        - name: mongo-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+meta
+  name: {{ .Values.mongo.serviceName }}
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: {{ .Values.mongo.port }}
+      targetPort: {{ .Values.mongo.port }}
+  type: ClusterIP

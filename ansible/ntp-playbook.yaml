@@ -1,0 +1,33 @@
+- name: Ensure NTP is installed and running on worker nodes
+  hosts: k8s_workers
+  become: yes
+  tasks:
+    - name: Install NTP package
+      package:
+        name: ntp
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install NTP package (RedHat)
+      package:
+        name: ntp
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Ensure NTP service is running and enabled
+      service:
+        name: ntp
+        state: started
+        enabled: yes
+
+    - name: Configure NTP servers
+      template:
+        src: ntp.conf.j2
+        dest: /etc/ntp.conf
+      notify: restart ntp
+
+  handlers:
+    - name: restart ntp
+      service:
+        name: ntp
+        state: restarted

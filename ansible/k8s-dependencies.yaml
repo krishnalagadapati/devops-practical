@@ -1,0 +1,51 @@
+- name: Install Kubernetes dependencies
+  hosts: k8s_workers
+  become: yes
+  tasks:
+    - name: Install required packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - apt-transport-https
+        - gnupg2
+        - software-properties-common
+      when: ansible_os_family == "Debian"
+
+    - name: Install container runtime (Docker)
+      package:
+        name: docker.io
+        state: present
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add Kubernetes repository key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Add Kubernetes repository
+      apt_repository:
+        repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+        state: present
+        filename: kubernetes
+
+    - name: Install kubelet, kubeadm, kubectl
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Start and enable kubelet service
+      service:
+        name: kubelet
+        state: started
+        enabled: yes

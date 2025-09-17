@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-mongo-service
+spec:
+  selector:
+    app: devops-mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
