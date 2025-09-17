@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "aws_region": "us-west-2",
+    "source_ami": "ami-1234567890abcdef0",
+    "instance_type": "t3.medium",
+    "ssh_username": "ubuntu"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "{{user `aws_region`}}",
+    "source_ami": "{{user `source_ami`}}",
+    "instance_type": "{{user `instance_type`}}",
+    "ssh_username": "{{user `ssh_username`}}",
+    "ami_name": "k8s-worker-node-{{timestamp}}",
+    "ami_description": "Kubernetes Worker Node with NTP and dependencies",
+    "tags": {
+      "Name": "k8s-worker-node",
+      "OS_Version": "Ubuntu",
+      "Release": "20.04",
+      "CreatedBy": "Packer"
+    }
+  }],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "../ansible/ntp-playbook.yaml"
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "../ansible/k8s-dependencies.yaml"
+    }
+  ]
+}

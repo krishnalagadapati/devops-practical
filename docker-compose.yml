@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:5.0 # Using a specific version is a good practice
+    container_name: devops-mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+  devops-app:
+    build: .
+    container_name: devops-node-app
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: "development"
+      MONGODB_URL: "mongodb://mongo:27017/devops-practical"
+    # The command overrides the Dockerfile's CMD to use nodemon for development
+    # The -L flag (legacy watch) is important for nodemon to work correctly in Docker
+    command: >
+      sh -c "npm install && npx nodemon -L server.js"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:

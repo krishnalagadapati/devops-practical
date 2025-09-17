@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+meta
+  name: {{ include "devops-app.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "devops-app.name" . }}
+  template:
+    meta
+      labels:
+        app: {{ include "devops-app.name" . }}
+    spec:
+      containers:
+        - name: {{ include "devops-app.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGO_URL
+              value: "mongodb://{{ .Values.mongo.serviceName }}:{{ .Values.mongo.port }}/mydatabase"
+---
+apiVersion: v1
+kind: Service
+meta
+  name: {{ include "devops-app.fullname" . }}-service
+spec:
+  selector:
+    app: {{ include "devops-app.name" . }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 3000
+  type: {{ .Values.service.type }}
