@@ -30,7 +30,16 @@ Push images to registry:
 bash
 docker tag devops-app:latest my-registry/devops-app:v1.0.0
 docker push my-registry/devops-app:v1.0.0
+# Docker images are created and tagged and pushed into local docker hub and the images are running succesfully
+![alt text](<Screenshot 2025-09-17 at 10.38.55 AM.png>)
+![alt text](<Screenshot 2025-09-17 at 10.41.27 AM.png>)
+![alt text](<Screenshot 2025-09-17 at 10.42.17 AM.png>)
 
+Dokcer containers are running 
+![alt text](<Screenshot 2025-09-17 at 10.44.21 AM.png>)
+
+# Tested the localhost:3000 and added an entity
+![alt text](<Screenshot 2025-09-17 at 10.44.21 AM-1.png>)
 
 
 Create EKS cluster with Terraform:
